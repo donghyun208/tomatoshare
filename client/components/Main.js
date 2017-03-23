@@ -16,7 +16,6 @@ class Main extends Component {
     return (
       <div className=' main-container'>
         <div className="col-xs-12">
-          <h1>Pomodoro Timer</h1>
           {this.props.children}
         </div>
       </div>

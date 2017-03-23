@@ -93,8 +93,21 @@ module.exports = (socket, io, roomList) => {
 
   })
 
+  socket.on('reset', () => {
+    console.log('reseting room')
+    resetRoom(currRoom)
+    io.sockets.in(currRoom.id).emit('updating', currRoom);
+  })
+
+
 };
 
+resetRoom = (room) => {
+  room.timeStart = null
+  room.time = 1500000
+  room.started = false
+  room.paused = false
+}
 
 updateTimer = (room) => {
 

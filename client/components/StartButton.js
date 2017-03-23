@@ -13,11 +13,11 @@ const StartButton = (props) => {
     }
     else {
       btnText = 'Pause Timer'
-      btnType = 'btn-danger'
+      btnType = 'btn-warning'
     }
   }
   return (
-    <button type='button' className={'btn btn-lg ' + btnType} onClick={props.onClick}>{btnText}</button>
+    <button type='button' className={'btn btn-lg btn-block ' + btnType} onClick={props.onClick}>{btnText}</button>
   );
 };
 

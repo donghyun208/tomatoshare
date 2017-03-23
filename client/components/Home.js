@@ -2,7 +2,9 @@ import React, { PropTypes, Component } from 'react'
 import {browserHistory} from 'react-router';
 
 import Timer from './Timer';
+import TimerMessage from './TimerMessage';
 import StartButton from './StartButton';
+import ResetButton from './ResetButton';
 // function SnowFlake(props) {
 //   return (
 //     <button type='button' className='btn btn-lg btn-success'></button>
@@ -28,7 +30,8 @@ class Home extends Component {
 
     this.roomID = this.props.routeParams.roomID
     this.render = this.render.bind(this)
-    this.btnClick = this.btnClick.bind(this)
+    this.StartBtnClick = this.StartBtnClick.bind(this)
+    this.ResetBtnClick = this.ResetBtnClick.bind(this)
     console.log('home')
   }
 
@@ -38,7 +41,8 @@ class Home extends Component {
       () => {
         if (this.state.started && !this.state.paused) {
           this.setState((prevState) => {
-            time: prevState.time -= 1000
+            let newTime = Math.max(prevState.time - 1000, 0)
+            return {time: newTime}
           })
         }
       },
@@ -79,13 +83,22 @@ class Home extends Component {
       })
       console.log('paused timer')
     })
+
+    this.socket.on('updating', (data) => {
+      console.log('updating room')
+      this.setState({
+        time: data.time,
+        started: data.started,
+        paused: data.paused
+      })
+    })
   }
 
   tick() {
     let elapsedTime = Date.now() - this.state.started
   }
 
-  btnClick() {
+  StartBtnClick() {
     if (this.state.started === false) {
       this.socket.emit('start')
     }
@@ -94,15 +107,35 @@ class Home extends Component {
     }
   }
 
+  ResetBtnClick() {
+    this.socket.emit('reset')
+  }
+
   render() {
     return (
-      <div className='home-container'>
+      <div className='home-container col-xs-12 col-md-8 col-md-offset-1'>
+        <h1>Shared Pomodoro Timer</h1>
+        <hr></hr>
         <div className="jumbotron col-xs-12 text-center">
+        { this.state.time <= 0 &&
+          <TimerMessage time={this.state.time}></TimerMessage>
+        }
+        { this.state.time > 0 &&
           <Timer time={this.state.time}></Timer>
+        }
         </div>
-        {this.props.children}
-        <div className='col-sm-12'>
-          <StartButton started={this.state.started} paused={this.state.paused} onClick={this.btnClick}></StartButton>
+        <div className='row'>
+          <div className='col-xs-3 col-md-4'> </div>
+          { this.state.time > 0 &&
+            <div className='col-xs-3 col-md-2'>
+              <StartButton started={this.state.started} paused={this.state.paused} onClick={this.StartBtnClick}></StartButton>
+            </div>
+          }
+          { (this.state.time <= 0 || this.state.paused) &&
+            <div className='col-xs-3 col-md-2'>
+              <ResetButton started={this.state.started} paused={this.state.paused} onClick={this.ResetBtnClick}></ResetButton>
+            </div>
+          }
         </div>
       </div>
     );
@@ -112,26 +145,5 @@ class Home extends Component {
 Home.contextTypes = {
   socket: React.PropTypes.object
 };
-
-//   return props.isLoading === true
-//     ? <p>LOADING</p>
-//         <div className='col-sm-8 col-sm-offset-2'>
-//           <UserDetailsWrapper header='Player 1'>
-//             <UserDetails info={props.playersInfo[0]} />
-//           </UserDetailsWrapper>
-//           <UserDetailsWrapper header='Player 2'>
-//             <UserDetails info={props.playersInfo[1]} />
-//           </UserDetailsWrapper>
-//         </div>
-//         <div className='col-sm-8 col-sm-offset-2'>
-//           <div className='col-sm-12' style={styles.space}>
-//             <button type='button' className='btn btn-lg btn-success' onClick={props.onInitiateBattle}>Initiate Battle!</button>
-//           </div>
-//           <div className='col-sm-12' style={styles.space}>
-//             <Link to='/playerOne'>
-//             </Link>
-//           </div>
-//         </div>
-//       </div>
 
 export default Home

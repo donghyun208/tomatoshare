@@ -16512,7 +16512,11 @@ module.exports = function(arraybuffer, start, end) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_router__ = __webpack_require__(123);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_router___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_router__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Timer__ = __webpack_require__(142);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__StartButton__ = __webpack_require__(141);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__TimerMessage__ = __webpack_require__(301);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__StartButton__ = __webpack_require__(141);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ResetButton__ = __webpack_require__(300);
+
+
 
 
 
@@ -16543,7 +16547,8 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
     this.roomID = this.props.routeParams.roomID;
     this.render = this.render.bind(this);
-    this.btnClick = this.btnClick.bind(this);
+    this.StartBtnClick = this.StartBtnClick.bind(this);
+    this.ResetBtnClick = this.ResetBtnClick.bind(this);
     console.log('home');
   }
 
@@ -16552,7 +16557,8 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     this.timerID = setInterval(() => {
       if (this.state.started && !this.state.paused) {
         this.setState(prevState => {
-          time: prevState.time -= 1000;
+          let newTime = Math.max(prevState.time - 1000, 0);
+          return { time: newTime };
         });
       }
     }, 1000);
@@ -16592,13 +16598,22 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
       });
       console.log('paused timer');
     });
+
+    this.socket.on('updating', data => {
+      console.log('updating room');
+      this.setState({
+        time: data.time,
+        started: data.started,
+        paused: data.paused
+      });
+    });
   }
 
   tick() {
     let elapsedTime = Date.now() - this.state.started;
   }
 
-  btnClick() {
+  StartBtnClick() {
     if (this.state.started === false) {
       this.socket.emit('start');
     } else {
@@ -16606,20 +16621,44 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     }
   }
 
+  ResetBtnClick() {
+    this.socket.emit('reset');
+  }
+
   render() {
     return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
       'div',
-      { className: 'home-container' },
+      { className: 'home-container col-xs-12 col-md-8 col-md-offset-1' },
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+        'h1',
+        null,
+        'Shared Pomodoro Timer'
+      ),
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('hr', null),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
         { className: 'jumbotron col-xs-12 text-center' },
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__Timer__["a" /* default */], { time: this.state.time })
+        this.state.time <= 0 && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__TimerMessage__["a" /* default */], { time: this.state.time }),
+        this.state.time > 0 && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__Timer__["a" /* default */], { time: this.state.time })
       ),
-      this.props.children,
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
-        { className: 'col-sm-12' },
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__StartButton__["a" /* default */], { started: this.state.started, paused: this.state.paused, onClick: this.btnClick })
+        { className: 'row' },
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'div',
+          { className: 'col-xs-3 col-md-4' },
+          ' '
+        ),
+        this.state.time > 0 && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'div',
+          { className: 'col-xs-3 col-md-2' },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__StartButton__["a" /* default */], { started: this.state.started, paused: this.state.paused, onClick: this.StartBtnClick })
+        ),
+        (this.state.time <= 0 || this.state.paused) && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'div',
+          { className: 'col-xs-3 col-md-2' },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__ResetButton__["a" /* default */], { started: this.state.started, paused: this.state.paused, onClick: this.ResetBtnClick })
+        )
       )
     );
   }
@@ -16628,27 +16667,6 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 Home.contextTypes = {
   socket: __WEBPACK_IMPORTED_MODULE_0_react___default.a.PropTypes.object
 };
-
-//   return props.isLoading === true
-//     ? <p>LOADING</p>
-//         <div className='col-sm-8 col-sm-offset-2'>
-//           <UserDetailsWrapper header='Player 1'>
-//             <UserDetails info={props.playersInfo[0]} />
-//           </UserDetailsWrapper>
-//           <UserDetailsWrapper header='Player 2'>
-//             <UserDetails info={props.playersInfo[1]} />
-//           </UserDetailsWrapper>
-//         </div>
-//         <div className='col-sm-8 col-sm-offset-2'>
-//           <div className='col-sm-12' style={styles.space}>
-//             <button type='button' className='btn btn-lg btn-success' onClick={props.onInitiateBattle}>Initiate Battle!</button>
-//           </div>
-//           <div className='col-sm-12' style={styles.space}>
-//             <Link to='/playerOne'>
-//             </Link>
-//           </div>
-//         </div>
-//       </div>
 
 /* harmony default export */ __webpack_exports__["a"] = Home;
 
@@ -16684,11 +16702,6 @@ class Main extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
         { className: 'col-xs-12' },
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          'h1',
-          null,
-          'Pomodoro Timer'
-        ),
         this.props.children
       )
     );
@@ -16720,12 +16733,12 @@ const StartButton = props => {
       btnType = 'btn-success';
     } else {
       btnText = 'Pause Timer';
-      btnType = 'btn-danger';
+      btnType = 'btn-warning';
     }
   }
   return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
     'button',
-    { type: 'button', className: 'btn btn-lg ' + btnType, onClick: props.onClick },
+    { type: 'button', className: 'btn btn-lg btn-block ' + btnType, onClick: props.onClick },
     btnText
   );
 };
@@ -36276,6 +36289,44 @@ module.exports = __webpack_amd_options__;
 
 module.exports = __webpack_require__(136);
 
+
+/***/ }),
+/* 300 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+
+
+const ResetButton = props => {
+  return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+    'button',
+    { type: 'button', className: 'btn btn-lg btn-block btn-danger', onClick: props.onClick },
+    'Reset Timer'
+  );
+};
+
+/* harmony default export */ __webpack_exports__["a"] = ResetButton;
+
+/***/ }),
+/* 301 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+
+
+const TimerMessage = props => {
+  return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+    'h1',
+    null,
+    'Times Up!'
+  );
+};
+
+/* harmony default export */ __webpack_exports__["a"] = TimerMessage;
 
 /***/ })
 /******/ ]);
