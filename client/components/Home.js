@@ -7,24 +7,19 @@ import TimerMessage from './TimerMessage';
 import StartButton from './StartButton';
 import ResetButton from './ResetButton';
 import ProgressBar from './ProgressBar';
-// function SnowFlake(props) {
-//   return (
-//     <button type='button' className='btn btn-lg btn-success'></button>
-//   )
-// }
-// console.log(SnowFlake)
 
-// function What(props) {
-//   return (
-//     <button></button>
-//   )
-// }
+const millisToMinutesAndSeconds = (millis) => {
+  var minutes = Math.floor(millis / 60000);
+  var seconds = ((millis % 60000) / 1000).toFixed(0);
+  return (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
+}
 
 class Home extends Component {
 
   constructor(props) {
     super(props);
-    this.alarm = new Audio('alarm.mp3');
+    this.alarmEnd = new Audio('alarm.mp3');
+    this.alarmStart = new Audio('start.mp3');
     this.state = {
       selectedTime: '25',
       totTime: 1500000,
@@ -38,7 +33,6 @@ class Home extends Component {
     this.StartBtnClick = this.StartBtnClick.bind(this)
     this.ResetBtnClick = this.ResetBtnClick.bind(this)
     this.timerChange = this.timerChange.bind(this)
-    console.log('home')
   }
 
   componentDidMount() {
@@ -49,15 +43,32 @@ class Home extends Component {
           this.setState((prevState) => {
             let newTime = Math.max(prevState.time - 1000, 0)
             if (newTime == 0 && prevState.time > 0) {
-              this.alarm.play();
+              this.alarmEnd.play();
             }
             return {
               time: newTime,
             }
           })
+          this.setTitle()
         }
       },
       1000);
+  }
+
+  setTitle() {
+    if (this.state.started) {
+      let minSecTime = millisToMinutesAndSeconds(this.state.time)
+      if (this.state.time <= 0) {
+        document.title = "Times Up!"
+      } else if (this.state.paused) {
+        document.title = minSecTime + " - paused"
+      } else {
+        document.title = minSecTime
+      }
+    }
+    else {
+      document.title = "Pomodoro Timer"
+    }
   }
 
   componentWillUnmount() {
@@ -68,25 +79,27 @@ class Home extends Component {
     this.socket = this.context.socket
     console.log("try to connect socket");
     this.socket.on("connect", () => {
-        this.socket.emit('roomID', this.roomID, (data) => {
-          console.log("Connected!", data);
-          this.roomID = data.id
-          this.setState({
-            selectedTime: String(data.totTime / (60 * 1000)),
-            totTime: data.totTime,
-            time: data.time,
-            started: data.started,
-            paused: data.paused
-          })
-          console.log(data)
-          browserHistory.push('/' + this.roomID)
+      this.socket.emit('roomID', this.roomID, (data) => {
+        console.log("Connected!", data);
+        this.roomID = data.id
+        this.setState({
+          selectedTime: String(data.totTime / (60 * 1000)),
+          totTime: data.totTime,
+          time: data.time,
+          started: data.started,
+          paused: data.paused
         })
+        console.log(data)
+        this.setTitle()
+        browserHistory.push('/' + this.roomID)
+      })
     });
 
     this.socket.on('starting', () => {
-      console.log("starting!");
+      this.alarmStart.play();
       this.startingTime = Date.now()
       this.setState({started: true})
+      this.setTitle()
     })
 
     this.socket.on('pausing', (data) => {
@@ -94,11 +107,10 @@ class Home extends Component {
         paused: data.paused,
         time: data.time
       })
-      console.log('paused timer')
+      this.setTitle()
     })
 
     this.socket.on('updating', (data) => {
-      console.log('updating room')
       this.setState({
         time: data.time,
         started: data.started,
@@ -107,6 +119,7 @@ class Home extends Component {
         selectedTime: String(data.totTime / (60 * 1000)),
       })
     })
+    this.setTitle()
   }
 
   tick() {
@@ -131,9 +144,6 @@ class Home extends Component {
       selectedTime: changeEvent.target.id
     });
     this.socket.emit('changeTime', changeEvent.target.id)
-    console.log(this.state.selectedTime)
-    // console.log(changeEvent.target.id)
-    // this.socket.emit('reset')
   }
 
   render() {
@@ -149,7 +159,7 @@ class Home extends Component {
           <TimerMessage time={this.state.time}></TimerMessage>
         }
         { this.state.time > 0 &&
-          <Timer time={this.state.time}></Timer>
+          <Timer formattedTime={millisToMinutesAndSeconds(this.state.time)}></Timer>
         }
         </div>
         <div className='row'>
@@ -169,8 +179,6 @@ class Home extends Component {
     );
   }
 };
-
-
 
 Home.contextTypes = {
   socket: React.PropTypes.object

@@ -16526,24 +16526,19 @@ module.exports = function(arraybuffer, start, end) {
 
 
 
-// function SnowFlake(props) {
-//   return (
-//     <button type='button' className='btn btn-lg btn-success'></button>
-//   )
-// }
-// console.log(SnowFlake)
 
-// function What(props) {
-//   return (
-//     <button></button>
-//   )
-// }
+const millisToMinutesAndSeconds = millis => {
+  var minutes = Math.floor(millis / 60000);
+  var seconds = (millis % 60000 / 1000).toFixed(0);
+  return seconds == 60 ? minutes + 1 + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+};
 
 class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
   constructor(props) {
     super(props);
-    this.alarm = new Audio('alarm.mp3');
+    this.alarmEnd = new Audio('alarm.mp3');
+    this.alarmStart = new Audio('start.mp3');
     this.state = {
       selectedTime: '25',
       totTime: 1500000,
@@ -16557,7 +16552,6 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     this.StartBtnClick = this.StartBtnClick.bind(this);
     this.ResetBtnClick = this.ResetBtnClick.bind(this);
     this.timerChange = this.timerChange.bind(this);
-    console.log('home');
   }
 
   componentDidMount() {
@@ -16567,14 +16561,30 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         this.setState(prevState => {
           let newTime = Math.max(prevState.time - 1000, 0);
           if (newTime == 0 && prevState.time > 0) {
-            this.alarm.play();
+            this.alarmEnd.play();
           }
           return {
             time: newTime
           };
         });
+        this.setTitle();
       }
     }, 1000);
+  }
+
+  setTitle() {
+    if (this.state.started) {
+      let minSecTime = millisToMinutesAndSeconds(this.state.time);
+      if (this.state.time <= 0) {
+        document.title = "Times Up!";
+      } else if (this.state.paused) {
+        document.title = minSecTime + " - paused";
+      } else {
+        document.title = minSecTime;
+      }
+    } else {
+      document.title = "Pomodoro Timer";
+    }
   }
 
   componentWillUnmount() {
@@ -16596,14 +16606,16 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
           paused: data.paused
         });
         console.log(data);
+        this.setTitle();
         __WEBPACK_IMPORTED_MODULE_1_react_router__["browserHistory"].push('/' + this.roomID);
       });
     });
 
     this.socket.on('starting', () => {
-      console.log("starting!");
+      this.alarmStart.play();
       this.startingTime = Date.now();
       this.setState({ started: true });
+      this.setTitle();
     });
 
     this.socket.on('pausing', data => {
@@ -16611,11 +16623,10 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         paused: data.paused,
         time: data.time
       });
-      console.log('paused timer');
+      this.setTitle();
     });
 
     this.socket.on('updating', data => {
-      console.log('updating room');
       this.setState({
         time: data.time,
         started: data.started,
@@ -16624,6 +16635,7 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         selectedTime: String(data.totTime / (60 * 1000))
       });
     });
+    this.setTitle();
   }
 
   tick() {
@@ -16647,9 +16659,6 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
       selectedTime: changeEvent.target.id
     });
     this.socket.emit('changeTime', changeEvent.target.id);
-    console.log(this.state.selectedTime);
-    // console.log(changeEvent.target.id)
-    // this.socket.emit('reset')
   }
 
   render() {
@@ -16673,7 +16682,7 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         { className: 'jumbotron col-xs-12 text-center' },
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__ProgressBar__["a" /* default */], { timePercent: this.state.time / this.state.totTime * 100 }),
         this.state.time <= 0 && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__TimerMessage__["a" /* default */], { time: this.state.time }),
-        this.state.time > 0 && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__Timer__["a" /* default */], { time: this.state.time })
+        this.state.time > 0 && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__Timer__["a" /* default */], { formattedTime: millisToMinutesAndSeconds(this.state.time) })
       ),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
@@ -16808,19 +16817,13 @@ const StartButton = props => {
 
 
 const Timer = props => {
-
   return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-    "h1",
+    'h1',
     null,
-    millisToMinutesAndSeconds(props.time)
+    props.formattedTime
   );
 };
 
-const millisToMinutesAndSeconds = millis => {
-  var minutes = Math.floor(millis / 60000);
-  var seconds = (millis % 60000 / 1000).toFixed(0);
-  return seconds == 60 ? minutes + 1 + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-};
 /* harmony default export */ __webpack_exports__["a"] = Timer;
 
 /***/ }),
