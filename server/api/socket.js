@@ -1,7 +1,7 @@
 
 
 const idGen = () => {
-  return Math.random().toString(36).substr(2, 9)
+  return Math.random().toString(36).substr(2, 8)
 }
 
 let clients = [];
@@ -40,6 +40,7 @@ module.exports = (socket, io, roomList) => {
       socket.join(roomID)
       roomList[roomID] = {
         id: roomID,
+        totTime: 1500000,
         timeStart: null,
         time: 1500000,
         started: false,
@@ -52,6 +53,7 @@ module.exports = (socket, io, roomList) => {
       modifiedRoom = {
         id: currRoom.id,
         timeStart: currRoom.timeStart,
+        totTime: currRoom.totTime,
         time: currRoom.time,
         started: currRoom.started,
         paused: currRoom.paused
@@ -99,12 +101,18 @@ module.exports = (socket, io, roomList) => {
     io.sockets.in(currRoom.id).emit('updating', currRoom);
   })
 
+  socket.on('changeTime', (newTime) => {
+    let newTimeMS = parseFloat(newTime) * 60 * 1000;
+    currRoom.totTime = newTimeMS
+    resetRoom(currRoom)
+    io.sockets.in(currRoom.id).emit('updating', currRoom);
+  })
 
 };
 
 resetRoom = (room) => {
   room.timeStart = null
-  room.time = 1500000
+  room.time = room.totTime
   room.started = false
   room.paused = false
 }

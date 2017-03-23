@@ -8,11 +8,11 @@ const StartButton = (props) => {
   }
   else {
     if (props.paused) {
-      btnText = 'Resume Timer'
+      btnText = 'Resume'
       btnType = 'btn-success'
     }
     else {
-      btnText = 'Pause Timer'
+      btnText = 'Pause'
       btnType = 'btn-warning'
     }
   }

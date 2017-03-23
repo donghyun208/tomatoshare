@@ -42,7 +42,6 @@ io.on('connection', (socket) => {
   require('./api/socket.js')(socket, io, persistent_data)
 });
 
-
 // the order of the next two lines is important (try to serve static files before redirecting)
 app.use(express.static(__dirname + '/views'));
 app.get('*', (req,res) => {
