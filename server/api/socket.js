@@ -11,7 +11,7 @@ module.exports = (socket, io, roomList) => {
   //
   clients[socket.id] = socket;
   console.log('connected')
-  let debug = true
+  let debug = false
 
   let currRoom = null;
 
@@ -24,14 +24,11 @@ module.exports = (socket, io, roomList) => {
     console.log('trying to join room: ' + roomID)
     let tryJoin = false
     if (roomID !== '') {
-      console.log(roomID in roomList)
       // try to join room
       if (roomID in roomList) {
-        console.log('exists!')
         socket.join(roomID)
       }
       else {
-        console.log('does not exist')
         roomID = ''
       }
     }
@@ -76,7 +73,6 @@ module.exports = (socket, io, roomList) => {
     io.sockets.in(currRoom.id).emit('starting');
     currRoom.started = true;
     currRoom.timeStart = Date.now();
-    console.log(currRoom)
   })
 
   socket.on('pause', () => {
@@ -118,8 +114,6 @@ resetRoom = (room) => {
 }
 
 updateTimer = (room) => {
-
-  console.log('updating TIMER!!!!!')
   // this fcn can create race conditions if multiple clients reconnect or pause/resume at the same time
   if (room.timeStart !== null) {
     let elapsedTime = Date.now() - room.timeStart

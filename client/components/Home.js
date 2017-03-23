@@ -140,10 +140,15 @@ class Home extends Component {
   }
 
   timerChange(changeEvent) {
-    this.setState({
-      selectedTime: changeEvent.target.id
-    });
-    this.socket.emit('changeTime', changeEvent.target.id)
+    let newTime = changeEvent.target.id
+    this.setState((prevState) => {
+      if (prevState.selectedTime != newTime) {
+        this.socket.emit('changeTime', newTime)
+        return {
+          selectedTime: newTime
+        }
+      }
+    })
   }
 
   render() {
