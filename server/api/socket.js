@@ -16,6 +16,10 @@ module.exports = (socket, io, roomList) => {
   let currRoom = null;
 
   socket.on('disconnect', () => {
+    if (currRoom !== null) {
+      currRoom.numConnected -= 1;
+      io.sockets.in(currRoom.id).emit('updating', currRoom);
+    }
     console.log('deleting')
     delete clients[socket.id];
   });
@@ -41,10 +45,14 @@ module.exports = (socket, io, roomList) => {
         timeStart: null,
         time: 1500000,
         started: false,
-        paused: false
+        paused: false,
+        numConnected: 0
       }
     }
     currRoom = roomList[roomID];
+    currRoom.numConnected += 1;
+    socket.broadcast.to(currRoom.id).emit('updating', currRoom);
+    console.log(currRoom)
 
     if (currRoom.started) {
       modifiedRoom = {
@@ -53,7 +61,8 @@ module.exports = (socket, io, roomList) => {
         totTime: currRoom.totTime,
         time: currRoom.time,
         started: currRoom.started,
-        paused: currRoom.paused
+        paused: currRoom.paused,
+        numConnected: currRoom.numConnected
       }
       updateTimer(modifiedRoom)
       cb(modifiedRoom)

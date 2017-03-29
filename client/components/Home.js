@@ -4,6 +4,7 @@ import {browserHistory} from 'react-router';
 import Timer from './Timer';
 import TimeSelector from './TimeSelector';
 import TimerMessage from './TimerMessage';
+import ConnectInfo from './ConnectInfo';
 import StartButton from './StartButton';
 import ResetButton from './ResetButton';
 import ProgressBar from './ProgressBar';
@@ -25,7 +26,8 @@ class Home extends Component {
       totTime: 1500000,
       time: 1500000,
       started: false,
-      paused: false
+      paused: false,
+      numConnected: 1
     }
 
     this.roomID = this.props.routeParams.roomID
@@ -87,7 +89,8 @@ class Home extends Component {
           totTime: data.totTime,
           time: data.time,
           started: data.started,
-          paused: data.paused
+          paused: data.paused,
+          numConnected: data.numConnected
         })
         console.log(data)
         this.setTitle()
@@ -117,6 +120,7 @@ class Home extends Component {
         paused: data.paused,
         totTime: data.totTime,
         selectedTime: String(data.totTime / (60 * 1000)),
+        numConnected: data.numConnected,
       })
     })
     this.setTitle()
@@ -157,7 +161,12 @@ class Home extends Component {
         <h1>Pomodoro Timer</h1>
         <hr></hr>
         <p className="lead">Share this URL with friends to work on tomatos together! Everyone on this page will see the same timer.</p>
-        <TimeSelector selectedOption={this.state.selectedTime} onClick={this.timerChange} ></TimeSelector>
+        <div className="col-xs-8">
+          <TimeSelector selectedOption={this.state.selectedTime} onClick={this.timerChange} ></TimeSelector>
+        </div>
+        <div className="col-xs-4">
+          <ConnectInfo numConnected={this.state.numConnected}></ConnectInfo>
+        </div>
         <div className="jumbotron col-xs-12 text-center">
         <ProgressBar timePercent={this.state.time / this.state.totTime * 100}></ProgressBar>
         { this.state.time <= 0 &&

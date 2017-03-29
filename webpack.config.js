@@ -1,11 +1,5 @@
-// var HtmlWebpackPlugin = require('html-webpack-plugin');
 var LiveReloadPlugin = require('webpack-livereload-plugin');
-
-var LiveReloadPluginConfig = new LiveReloadPlugin({
-  template: __dirname + '/client/index.html',
-  filename: 'index.html',
-  inject: 'body'
-})
+var LiveReloadPluginConfig = new LiveReloadPlugin()
 
 
 module.exports = {
