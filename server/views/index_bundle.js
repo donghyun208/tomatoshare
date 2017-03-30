@@ -23642,8 +23642,9 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         selectedTime: String(data.totTime / (60 * 1000)),
         numConnected: data.numConnected
       });
+      console.log(data);
+      this.setTitle();
     });
-    this.setTitle();
   }
 
   tick() {
@@ -23677,9 +23678,9 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
   render() {
     return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
       'div',
-      { className: 'home-container col-xs-12 col-md-8 col-md-offset-1' },
+      { className: 'container col-md-10 offset-md-1 col-lg-8 offset-lg-2' },
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-        'h1',
+        'h2',
         null,
         'Pomodoro Timer'
       ),
@@ -23691,13 +23692,17 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
       ),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
-        { className: 'col-xs-8' },
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__TimeSelector__["a" /* default */], { selectedOption: this.state.selectedTime, onClick: this.timerChange })
-      ),
-      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-        'div',
-        { className: 'col-xs-4' },
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__ConnectInfo__["a" /* default */], { numConnected: this.state.numConnected })
+        { className: 'row' },
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'div',
+          { className: 'col-12 col-sm-4 push-sm-8 text-center text-sm-right float-bottom' },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__ConnectInfo__["a" /* default */], { numConnected: this.state.numConnected })
+        ),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'div',
+          { className: 'col-12 col-sm-8 pull-sm-4 text-center text-sm-left' },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__TimeSelector__["a" /* default */], { selectedOption: this.state.selectedTime, onClick: this.timerChange })
+        )
       ),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
@@ -23711,17 +23716,22 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         { className: 'row' },
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
-          { className: 'col-xs-2 col-md-3' },
+          { className: 'col-md-2' },
           ' '
         ),
         this.state.time > 0 && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
-          { className: 'col-xs-4 col-md-3' },
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__StartButton__["a" /* default */], { started: this.state.started, paused: this.state.paused, onClick: this.StartBtnClick })
+          { className: 'col-12 col-sm-6 col-md-4' },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__StartButton__["a" /* default */], { started: this.state.started, paused: this.state.paused, onClick: this.StartBtnClick }),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'div',
+            { className: 'hidden-sm-up' },
+            '\xA0'
+          )
         ),
         (this.state.time <= 0 || this.state.paused) && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
-          { className: 'col-xs-4 col-md-3' },
+          { className: 'col-12 col-sm-6 col-md-4' },
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__ResetButton__["a" /* default */], { started: this.state.started, paused: this.state.paused, onClick: this.ResetBtnClick })
         )
       )
@@ -23873,11 +23883,6 @@ const StartButton = props => {
 
 
 const TimeSelector = props => {
-  let style = {
-    width: props.timePercent + '%'
-    // display: 'block',
-    // float: 'right'
-  };
   return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
     'div',
     { className: 'btn-group', 'data-toggle': 'buttons' },
@@ -54365,11 +54370,19 @@ module.exports = __webpack_require__(251);
 
 
 const ConnectInfo = props => {
+  let userGlyph;
+  if (props.numConnected > 2) {
+    userGlyph = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "fa fa-users", "aria-hidden": "true" });
+  } else {
+    userGlyph = [];
+    for (let i = 0; i < props.numConnected; i++) {
+      userGlyph.push(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "fa fa-user", "aria-hidden": "true", key: i }));
+    }
+  }
   return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-    "div",
-    { className: "pull-right" },
-    "Number Connected: ",
-    props.numConnected
+    "h3",
+    { className: "float-bottom panel panel-default" },
+    userGlyph
   );
 };
 

@@ -2,11 +2,6 @@ import React, { PropTypes, Component } from 'react'
 import { Button } from 'react-bootstrap';
 
 const TimeSelector = (props) => {
-  let style = {
-    width: props.timePercent + '%'
-    // display: 'block',
-    // float: 'right'
-  }
   return (
     <div className="btn-group" data-toggle="buttons">
       <label className={"btn btn-primary" + (props.selectedOption === '25' ? " active": "")}>

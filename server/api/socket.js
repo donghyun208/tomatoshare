@@ -18,6 +18,7 @@ module.exports = (socket, io, roomList) => {
   socket.on('disconnect', () => {
     if (currRoom !== null) {
       currRoom.numConnected -= 1;
+      updateTimer(currRoom)
       io.sockets.in(currRoom.id).emit('updating', currRoom);
     }
     console.log('deleting')
@@ -51,21 +52,21 @@ module.exports = (socket, io, roomList) => {
     }
     currRoom = roomList[roomID];
     currRoom.numConnected += 1;
-    socket.broadcast.to(currRoom.id).emit('updating', currRoom);
-    console.log(currRoom)
 
     if (currRoom.started) {
-      modifiedRoom = {
-        id: currRoom.id,
-        timeStart: currRoom.timeStart,
-        totTime: currRoom.totTime,
-        time: currRoom.time,
-        started: currRoom.started,
-        paused: currRoom.paused,
-        numConnected: currRoom.numConnected
-      }
-      updateTimer(modifiedRoom)
-      cb(modifiedRoom)
+      // modifiedRoom = {
+      //   id: currRoom.id,
+      //   timeStart: currRoom.timeStart,
+      //   totTime: currRoom.totTime,
+      //   time: currRoom.time,
+      //   started: currRoom.started,
+      //   paused: currRoom.paused,
+      //   numConnected: currRoom.numConnected
+      // }
+      // updateTimer(modifiedRoom)
+      // cb(modifiedRoom)
+      updateTimer(currRoom)
+      cb(currRoom)
     }
     else {
       cb(currRoom)
@@ -75,6 +76,7 @@ module.exports = (socket, io, roomList) => {
       // console.log(roomList)
       console.log(roomID in roomList)
     }
+    socket.broadcast.to(currRoom.id).emit('updating', currRoom);
   })
 
   socket.on('start', () => {
@@ -85,16 +87,14 @@ module.exports = (socket, io, roomList) => {
   })
 
   socket.on('pause', () => {
+    updateTimer(currRoom)
+    currRoom.paused = !currRoom.paused
+    io.sockets.in(currRoom.id).emit('pausing', currRoom);
+
     if (!currRoom.paused ) {
-      updateTimer(currRoom)
-      currRoom.paused = !currRoom.paused
-      io.sockets.in(currRoom.id).emit('pausing', currRoom);
       console.log(currRoom + 'paused')
     }
     else {
-      currRoom.paused = !currRoom.paused
-      currRoom.timeStart = Date.now()
-      io.sockets.in(currRoom.id).emit('pausing', currRoom);
       console.log(currRoom + 'resumed')
     }
 
@@ -124,12 +124,17 @@ resetRoom = (room) => {
 
 updateTimer = (room) => {
   // this fcn can create race conditions if multiple clients reconnect or pause/resume at the same time
-  if (room.timeStart !== null) {
-    let elapsedTime = Date.now() - room.timeStart
-    room.timeStart = Date.now()
-    console.log('elapsed' + elapsedTime)
-    room.time -= elapsedTime
-  }
+    if (!room.paused ) {
+      if (room.timeStart !== null) {
+        let elapsedTime = Date.now() - room.timeStart
+        room.timeStart = Date.now()
+        console.log('elapsed' + elapsedTime)
+        room.time -= elapsedTime
+      }
+    }
+    else {
+      room.timeStart = Date.now()
+    }
 }
 
 

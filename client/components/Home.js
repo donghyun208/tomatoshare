@@ -122,8 +122,9 @@ class Home extends Component {
         selectedTime: String(data.totTime / (60 * 1000)),
         numConnected: data.numConnected,
       })
+      console.log(data)
+      this.setTitle()
     })
-    this.setTitle()
   }
 
   tick() {
@@ -157,15 +158,17 @@ class Home extends Component {
 
   render() {
     return (
-      <div className='home-container col-xs-12 col-md-8 col-md-offset-1'>
-        <h1>Pomodoro Timer</h1>
+      <div className='container col-md-10 offset-md-1 col-lg-8 offset-lg-2'>
+        <h2>Pomodoro Timer</h2>
         <hr></hr>
         <p className="lead">Share this URL with friends to work on tomatos together! Everyone on this page will see the same timer.</p>
-        <div className="col-xs-8">
-          <TimeSelector selectedOption={this.state.selectedTime} onClick={this.timerChange} ></TimeSelector>
-        </div>
-        <div className="col-xs-4">
-          <ConnectInfo numConnected={this.state.numConnected}></ConnectInfo>
+        <div className="row">
+          <div className="col-12 col-sm-4 push-sm-8 text-center text-sm-right float-bottom">
+            <ConnectInfo numConnected={this.state.numConnected}></ConnectInfo>
+          </div>
+          <div className="col-12 col-sm-8 pull-sm-4 text-center text-sm-left">
+            <TimeSelector selectedOption={this.state.selectedTime} onClick={this.timerChange} ></TimeSelector>
+          </div>
         </div>
         <div className="jumbotron col-xs-12 text-center">
         <ProgressBar timePercent={this.state.time / this.state.totTime * 100}></ProgressBar>
@@ -177,14 +180,15 @@ class Home extends Component {
         }
         </div>
         <div className='row'>
-          <div className='col-xs-2 col-md-3'> </div>
+          <div className='col-md-2'> </div>
           { this.state.time > 0 &&
-            <div className='col-xs-4 col-md-3'>
+            <div className='col-12 col-sm-6 col-md-4'>
               <StartButton started={this.state.started} paused={this.state.paused} onClick={this.StartBtnClick}></StartButton>
+              <div className="hidden-sm-up">&nbsp;</div>
             </div>
           }
           { (this.state.time <= 0 || this.state.paused) &&
-            <div className='col-xs-4 col-md-3'>
+            <div className='col-12 col-sm-6 col-md-4'>
               <ResetButton started={this.state.started} paused={this.state.paused} onClick={this.ResetBtnClick}></ResetButton>
             </div>
           }
