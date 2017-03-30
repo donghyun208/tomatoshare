@@ -23688,7 +23688,7 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'p',
         { className: 'lead' },
-        'Share this URL with friends to work on tomatos together! Everyone on this page will see the same timer.'
+        'Share this URL with friends to work on tomatoes together! Everyone on this page will see the same timer.'
       ),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',

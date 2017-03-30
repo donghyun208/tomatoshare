@@ -161,7 +161,7 @@ class Home extends Component {
       <div className='container col-md-10 offset-md-1 col-lg-8 offset-lg-2'>
         <h2>Pomodoro Timer</h2>
         <hr></hr>
-        <p className="lead">Share this URL with friends to work on tomatos together! Everyone on this page will see the same timer.</p>
+        <p className="lead">Share this URL with friends to work on tomatoes together! Everyone on this page will see the same timer.</p>
         <div className="row">
           <div className="col-12 col-sm-4 push-sm-8 text-center text-sm-right float-bottom">
             <ConnectInfo numConnected={this.state.numConnected}></ConnectInfo>
