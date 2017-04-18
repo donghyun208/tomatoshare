@@ -1,0 +1,5 @@
+h1.timer{font-size: 60px;}
+
+@media (min-width: 576px) {
+    h1.timer{font-size: 60px;}
+}

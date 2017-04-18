@@ -147,7 +147,7 @@ class Home extends Component {
   timerChange(changeEvent) {
     let newTime = changeEvent.target.id
     this.setState((prevState) => {
-      if (prevState.selectedTime != newTime) {
+      if (this.state.started === false && prevState.selectedTime != newTime) {
         this.socket.emit('changeTime', newTime)
         return {
           selectedTime: newTime
@@ -158,7 +158,7 @@ class Home extends Component {
 
   render() {
     return (
-      <div className='container col-md-10 offset-md-1 col-lg-8 offset-lg-2'>
+      <div className='container col-md-10 offset-md-1 col-lg-8 offset-lg-2 pt-1'>
         <h2>Pomodoro Timer</h2>
         <hr></hr>
         <p className="lead">Share this URL with friends to work on tomatoes together! Everyone on this page will see the same timer.</p>
@@ -167,7 +167,7 @@ class Home extends Component {
             <ConnectInfo numConnected={this.state.numConnected}></ConnectInfo>
           </div>
           <div className="col-12 col-sm-8 pull-sm-4 text-center text-sm-left">
-            <TimeSelector selectedOption={this.state.selectedTime} onClick={this.timerChange} ></TimeSelector>
+            <TimeSelector selectedOption={this.state.selectedTime} onClick={this.timerChange} started={this.state.started} ></TimeSelector>
           </div>
         </div>
         <div className="jumbotron col-xs-12 text-center">
