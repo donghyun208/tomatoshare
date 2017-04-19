@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 
 const TimeSelector = (props) => {
   let disabledText = ""
-  if (props.started) {
+  if (props.started && props.time > 0) {
     disabledText = " disabled"
   }
   return (

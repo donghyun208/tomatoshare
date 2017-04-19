@@ -122,7 +122,6 @@ class Home extends Component {
         selectedTime: String(data.totTime / (60 * 1000)),
         numConnected: data.numConnected,
       })
-      console.log(data)
       this.setTitle()
     })
   }
@@ -147,7 +146,7 @@ class Home extends Component {
   timerChange(changeEvent) {
     let newTime = changeEvent.target.id
     this.setState((prevState) => {
-      if (this.state.started === false && prevState.selectedTime != newTime) {
+      if ((this.state.started === false || this.state.time === 0) && prevState.selectedTime != newTime) {
         this.socket.emit('changeTime', newTime)
         return {
           selectedTime: newTime
@@ -167,7 +166,7 @@ class Home extends Component {
             <ConnectInfo numConnected={this.state.numConnected}></ConnectInfo>
           </div>
           <div className="col-12 col-sm-8 pull-sm-4 text-center text-sm-left">
-            <TimeSelector selectedOption={this.state.selectedTime} onClick={this.timerChange} started={this.state.started} ></TimeSelector>
+            <TimeSelector selectedOption={this.state.selectedTime} onClick={this.timerChange} started={this.state.started} time={this.state.time}></TimeSelector>
           </div>
         </div>
         <div className="jumbotron col-xs-12 text-center">

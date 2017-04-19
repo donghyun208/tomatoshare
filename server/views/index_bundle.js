@@ -23672,7 +23672,6 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         selectedTime: String(data.totTime / (60 * 1000)),
         numConnected: data.numConnected
       });
-      console.log(data);
       this.setTitle();
     });
   }
@@ -23696,7 +23695,7 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
   timerChange(changeEvent) {
     let newTime = changeEvent.target.id;
     this.setState(prevState => {
-      if (this.state.started === false && prevState.selectedTime != newTime) {
+      if ((this.state.started === false || this.state.time === 0) && prevState.selectedTime != newTime) {
         this.socket.emit('changeTime', newTime);
         return {
           selectedTime: newTime
@@ -23731,7 +23730,7 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
           { className: 'col-12 col-sm-8 pull-sm-4 text-center text-sm-left' },
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__TimeSelector__["a" /* default */], { selectedOption: this.state.selectedTime, onClick: this.timerChange, started: this.state.started })
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__TimeSelector__["a" /* default */], { selectedOption: this.state.selectedTime, onClick: this.timerChange, started: this.state.started, time: this.state.time })
         )
       ),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -23914,7 +23913,7 @@ const StartButton = props => {
 
 const TimeSelector = props => {
   let disabledText = "";
-  if (props.started) {
+  if (props.started && props.time > 0) {
     disabledText = " disabled";
   }
   return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
