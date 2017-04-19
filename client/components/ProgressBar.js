@@ -3,8 +3,6 @@ import React, { PropTypes, Component } from 'react'
 const ProgressBar = (props) => {
   let style = {
     width: props.timePercent + '%'
-    // display: 'block',
-    // float: 'right'
   }
   return (
     <div className="progress">

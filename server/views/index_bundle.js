@@ -23999,18 +23999,7 @@ const TimerMessage = props => {
 
 
 
-// import {IndexRoute} from 'react-router';
-// import {
-//   BrowserRouter as Router,
-//   Route,
-//   Link,
-//   HashRouter
-// } from 'react-router-dom'
 
-
-
-// const PromptContainer = require('../containers/PromptContainer');
-// const ConfirmBattleContainer = require('../containers/ConfirmBattleContainer');
 
 const routes = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
   __WEBPACK_IMPORTED_MODULE_1_react_router__["Router"],
@@ -24023,11 +24012,6 @@ const routes = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 );
 
 /* harmony default export */ __webpack_exports__["a"] = routes;
-// <IndexRoute component={Home} />
-
-// <Route path='playerOne' header='Player One' component={PromptContainer} />
-// <Route path='playerTwo/:playerOne' header='Player Two' component={PromptContainer} />
-// <Route path='battle' component={ConfirmBattleContainer} />
 
 /***/ }),
 /* 264 */
