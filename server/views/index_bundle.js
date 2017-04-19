@@ -23606,6 +23606,9 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         this.setTitle();
       }
     }, 1000);
+    this.syncTimer = setInterval(() => {
+      this.socket.emit('syncRoom');
+    }, 17500);
   }
 
   setTitle() {
@@ -23625,6 +23628,7 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
   componentWillUnmount() {
     clearInterval(this.timerID);
+    clearInterval(this.syncTimer);
   }
 
   initSockets() {
@@ -23664,6 +23668,7 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     });
 
     this.socket.on('updating', data => {
+      console.log('updating');
       this.setState({
         time: data.time,
         started: data.started,

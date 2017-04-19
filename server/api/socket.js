@@ -113,6 +113,11 @@ module.exports = (socket, io, roomList) => {
     io.sockets.in(currRoom.id).emit('updating', currRoom);
   })
 
+  socket.on('syncRoom', () => {
+    updateTimer(currRoom)
+    socket.emit('updating', currRoom);
+  })
+
 };
 
 resetRoom = (room) => {

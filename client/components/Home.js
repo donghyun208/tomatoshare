@@ -55,6 +55,11 @@ class Home extends Component {
         }
       },
       1000);
+    this.syncTimer = setInterval(
+      () => {
+        this.socket.emit('syncRoom')
+      },
+      17500);
   }
 
   setTitle() {
@@ -75,6 +80,7 @@ class Home extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timerID);
+    clearInterval(this.syncTimer);
   }
 
   initSockets() {
@@ -114,6 +120,7 @@ class Home extends Component {
     })
 
     this.socket.on('updating', (data) => {
+      console.log('updating')
       this.setState({
         time: data.time,
         started: data.started,
