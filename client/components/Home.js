@@ -15,6 +15,22 @@ const millisToMinutesAndSeconds = (millis) => {
   return (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
 }
 
+let xhttpStart = null;
+let xhttpEnd = null;
+if (typeof(Storage) !== "undefined") {
+  let startURL = localStorage.getItem("tomatoshare_start")
+  if (startURL !== null) {
+    xhttpStart = new XMLHttpRequest();
+    xhttpStart.open("GET", startURL, true);
+  }
+  let endURL = localStorage.getItem("tomatoshare_end")
+  if (endURL !== null) {
+    xhttpEnd = new XMLHttpRequest();
+    xhttpEnd.open("GET", endURL, true);
+  }
+}
+
+
 class Home extends Component {
 
   constructor(props) {
@@ -46,6 +62,7 @@ class Home extends Component {
             let newTime = Math.max(prevState.time - 1000, 0)
             if (newTime == 0 && prevState.time > 0) {
               this.alarmEnd.play();
+              this.checkLocalStorageEnd()
             }
             return {
               time: newTime,
@@ -109,6 +126,9 @@ class Home extends Component {
       this.startingTime = Date.now()
       this.setState({started: true})
       this.setTitle()
+      if (this.state.selectedTime !== '5') {
+        this.checkLocalStorageStart()
+      }
     })
 
     this.socket.on('pausing', (data) => {
@@ -160,6 +180,28 @@ class Home extends Component {
         }
       }
     })
+  }
+
+  checkLocalStorageStart() {
+    if (typeof(Storage) !== "undefined") {
+      let URL = localStorage.getItem("tomatoshare_start")
+      if (URL !== null) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.open("GET", URL, true);
+        xhttp.send()
+      }
+    }
+  }
+
+  checkLocalStorageEnd() {
+    if (typeof(Storage) !== "undefined") {
+      let URL = localStorage.getItem("tomatoshare_end")
+      if (URL !== null) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.open("GET", URL, true);
+        xhttp.send()
+      }
+    }
   }
 
   render() {
