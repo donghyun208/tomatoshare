@@ -2,9 +2,11 @@
 
 ## How to Use: 
 
-Share the URL with friends and coworkers to work on Tomatoes together, or let others know when you shouldn't be disturbed. Anyone who is on the same URL as you (made unique by the 6 character ID) will be able to see the same Timer as you, as well as Pause, Reset, and change the time length.
+[tomatoshare.herokuapp.com](http://tomatoshare.herokuapp.com)
 
-The User glyph on the right side of the webpage indicates how many people are currently viewing the same URL as you - useful for knowing when the other person has successfully logged onto the site. (If there are 3 or more users, the site will only show 3 Users.)
+Share the URL with friends and coworkers to work on Tomatoes together, or to let others know when you shouldn't be disturbed. Anyone who is on the same URL as you (made unique by the 6 character ID) will be able to see the same Timer as you, as well as Pause, Reset, and change the time length. Once anyone starts the Timer, a sound will play, and the countdown will begin for everyone. Another sound will signify the end of the Timer. Optimized for mobile using Bootstrap 4.
+
+The User glyph on the right side of the webpage indicates how many people are currently viewing the same URL as you - useful for knowing when the other person has successfully logged onto the site. (If there are 3 or more users, the webpage will only show 3 Users.)
 
 
 ## Connecting to APIs:
